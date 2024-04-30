@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yumi - Let's Onboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Yumi Onboarding!</h1>
+        <form id="onboardingForm" class="onboarding-form">
+            <div class="form-group">
+                <label for="companyName">Company Name:</label>
+                <input type="text" id="companyName" placeholder="Enter company name">
+            </div>
+            <div class="form-group">
+                <label for="newHireName">New Hire's Name:</label>
+                <input type="text" id="newHireName" placeholder="Enter new hire's name">
+            </div>
+            <div class="form-group">
+                <label for="jobDescription">Job Description:</label>
+                <textarea id="jobDescription" placeholder="Paste the job description here"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="teamsInteraction">Teams Interaction:</label>
+                <textarea id="teamsInteraction" placeholder="List teams the new hire will interact with"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="managementAndProjects">Management and Projects:</label>
+                <textarea id="managementAndProjects" placeholder="Describe management roles and projects"></textarea>
+            </div>
+            <button type="button" id="generateDocument">Generate Document</button>
+        </form>
+    </div>
+
+    <script>
+    document.getElementById('generateDocument').addEventListener('click', function() {
+        var companyName = document.getElementById('companyName').value;
+        var newHireName = document.getElementById('newHireName').value;
+        var jobDescription = document.getElementById('jobDescription').value;
+        var teamsInteraction = document.getElementById('teamsInteraction').value;
+        var managementAndProjects = document.getElementById('managementAndProjects').value;
+
+        fetch('/api/generate-plan', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                companyName: companyName,
+                newHireName: newHireName,
+                jobDescription: jobDescription,
+                teamsInteraction: teamsInteraction,
+                managementAndProjects: managementAndProjects
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log("TC: Plan" + data.plan.join('\n'));
+                // Create a Blob from the data
+                const blob = new Blob([data.plan.join('\n')], { type: 'text/plain' });
+
+                // Create a URL for the Blob
+                const url = URL.createObjectURL(blob);
+
+                // Create a link element
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'onboarding_plan.txt';
+
+                // Append the link to the body
+                document.body.appendChild(link);
+
+                // Programmatically click the link to download the file
+                link.click();
+
+                // Remove the link from the body
+                document.body.removeChild(link);
+
+                alert('Document Generated Successfully! Check your downloads folder.');
+            } else {
+                alert('Failed to generate the document.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error generating document.');
+        });
+    });
+    </script>
+</body>
+</html>

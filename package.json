@@ -1,0 +1,15 @@
+{
+  "name": "yumi-onboarding",
+  "version": "1.0.0",
+  "description": "Onboarding document generator for new hires.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "body-parser": "^1.19.0",
+    "dotenv": "^16.4.5",
+    "openai": "^4.39.1"
+  }
+}
